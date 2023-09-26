@@ -1,0 +1,11 @@
+name: mantis_finite_difference
+channels:
+    - defaults
+dependencies:
+    - python=3.9
+    - numpy
+    - matplotlib
+    - jupyter
+    - pip
+    - pip:
+        - git+https://github.com/gpap-gpap/anisotroPY@dev-fAVO
