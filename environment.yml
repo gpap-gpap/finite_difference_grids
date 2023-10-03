@@ -4,8 +4,11 @@ channels:
 dependencies:
     - python=3.9
     - numpy
+    - pandas
     - matplotlib
     - jupyter
     - pip
     - pip:
         - git+https://github.com/gpap-gpap/anisotroPY@dev-fAVO
+        - numba
+        - openpyxl
