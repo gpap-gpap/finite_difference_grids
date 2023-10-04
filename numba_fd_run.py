@@ -10,7 +10,7 @@ import numpy as np
 import zener
 
 # parse command line arguments using argparse
-# input_dir = "./baseline_output"
+input_dir = "./baseline_output/"
 desc = 'Program to do staggered grid finite difference modeling in 2D fully anisotropic media with attenuation based on relaxation of standard linear solid.'
 
 parser = argparse.ArgumentParser(description=desc, formatter_class = argparse.ArgumentDefaultsHelpFormatter)
@@ -28,7 +28,7 @@ optionalNamed.add_argument("-fpeak", "-fp", type=np.float64, \
 optionalNamed.add_argument("-verbose", '-v', type=int, default=0, \
                            help=">0 for verbose output to stderr")
 optionalNamed.add_argument("-parmsfile", '-gf', type=str, \
-                           default='../data/parms.xlsx', \
+                           default='parms.xlsx', \
                            help="Grid file for input to program")
 optionalNamed.add_argument("-wavetype", '-wt', type=int, default=0, \
                            help="0 for Ricker wavelet; 1 for AKB waelet 2;\
@@ -49,42 +49,42 @@ optionalNamed.add_argument("-use_PML", '-pml', type=int, default=1, \
                            help="= 1 to use Perfectly Matched Layer \
                            absorbing boundayr conditions")
 optionalNamed.add_argument("-a11file", '-a11f', type=str, \
-                           default='a11.bin', \
+                           default=f"{input_dir}a11.bin", \
                            help="files of elastic constants and density \
                            aij = Cij/rho (density normalized stiffness)")
 optionalNamed.add_argument("-a13file", '-a13f', type=str, \
-                           default='a13.bin', \
+                           default=f"{input_dir}a13.bin", \
                            help="aij = Cij/rho (density normalized stiffness)")
 optionalNamed.add_argument("-a15file", '-a15f', type=str, \
-                           default='a15.bin', \
+                           default=f"{input_dir}a15.bin", \
                            help="aij = Cij/rho (density normalized stiffness)")
 optionalNamed.add_argument("-a33file", '-a33f', type=str, \
-                           default='a33.bin', \
+                           default=f"{input_dir}a33.bin", \
                            help="aij = Cij/rho (density normalized stiffness)")
 optionalNamed.add_argument("-a35file", '-a35f', type=str, \
-                           default='a35.bin', \
+                           default=f"{input_dir}a35.bin", \
                            help="aij = Cij/rho (density normalized stiffness)")
 optionalNamed.add_argument("-a55file", '-a55f', type=str, \
-                           default='a55.bin', \
+                           default=f"{input_dir}a55.bin", \
                            help="aij = Cij/rho (density normalized stiffness)")
 optionalNamed.add_argument("-rhofile", '-rhof', type=str, \
-                           default='density.bin', \
+                           default=f"{input_dir}density.bin", \
                            help="grid of density values")
 
 optionalNamed.add_argument("-tau_sig_dfile", '-tau_sigP', type=str, \
-                           default='tau_sig_d.bin', \
+                           default=f"{input_dir}tau_sig_d.bin", \
                            help="grid of stress dilational (P) \
                            relaxation times")
 optionalNamed.add_argument("-tau_eps_dfile", '-tau_epsP', type=str, \
-                           default='tau_eps_d.bin', \
+                           default=f"{input_dir}tau_eps_d.bin", \
                            help="grid of strain dilational (P) \
                            relaxation times")
 optionalNamed.add_argument("-tau_sig_sfile", '-tau_sigS', type=str, \
-                           default='tau_sig_s.bin', \
+                           default=f"{input_dir}tau_sig_s.bin", \
                            help="grid of stress shear (S) \
                            relaxation times")
 optionalNamed.add_argument("-tau_eps_sfile", '-tau_epsS', type=str, \
-                           default='tau_eps_s.bin', \
+                           default=f"{input_dir}tau_eps_s.bin", \
                            help="grid of strain shear (S) \
                            relaxation times")
 
@@ -278,6 +278,13 @@ sxx = np.zeros([grid.nxtot + 4, grid.nztot + 4])
 sxz = np.zeros([grid.nxtot + 4, grid.nztot + 4])
 szz = np.zeros([grid.nxtot + 4, grid.nztot + 4])
 
+# vx = np.zeros([grid.nxtot, grid.nztot])
+# vz = np.zeros([grid.nxtot, grid.nztot])
+
+# sxx = np.zeros([grid.nxtot, grid.nztot])
+# sxz = np.zeros([grid.nxtot, grid.nztot])
+# szz = np.zeros([grid.nxtot, grid.nztot])
+
 F = zener.Body_Force(grid)
 
 F.get_body_force(sx, ex, sz, ez, Cij)
@@ -344,13 +351,57 @@ for it in range(grid.nt):
                                                       PML.Psi_z_szz_t, \
                                                       PML.Psi_z_szz_b, \
                                                       vx, vz)
-
+        # vx2, vz2, \
+        # PML.Psi_x_sxx_l2, \
+        # PML.Psi_x_sxx_r2, \
+        # PML.Psi_x_sxz_l2, \
+        # PML.Psi_x_sxz_r2, \
+        # PML.Psi_z_sxz_t2, \
+        # PML.Psi_z_sxz_b2, \
+        # PML.Psi_z_szz_t2, \
+        # PML.Psi_z_szz_b2 = zener.update_velocities_PML_old(sx, ex, sz, ez, Cij.rho, \
+        #                                               grid.nxtot, grid.nztot, \
+        #                                               grid.nxabs, grid.nzabs, \
+        #                                               grid.dl, grid.dt, \
+        #                                               sxx, sxz, szz, \
+        #                                               PML.ax_l, \
+        #                                               PML.ax_r, \
+        #                                               PML.ax_half_l, \
+        #                                               PML.ax_half_r, \
+        #                                               PML.az_t, \
+        #                                               PML.az_b, \
+        #                                               PML.az_half_t, \
+        #                                               PML.az_half_b, \
+        #                                               PML.bx_l, \
+        #                                               PML.bx_r, \
+        #                                               PML.bx_half_l, \
+        #                                               PML.bx_half_r, \
+        #                                               PML.bz_t, \
+        #                                               PML.bz_b, \
+        #                                               PML.bz_half_t, \
+        #                                               PML.bz_half_b, \
+        #                                               PML.Psi_x_sxx_l, \
+        #                                               PML.Psi_x_sxx_r, \
+        #                                               PML.Psi_x_sxz_l, \
+        #                                               PML.Psi_x_sxz_r, \
+        #                                               PML.Psi_z_sxz_t, \
+        #                                               PML.Psi_z_sxz_b, \
+        #                                               PML.Psi_z_szz_t, \
+        #                                               PML.Psi_z_szz_b, \
+        #                                               vx, vz)
+        # print(f"vx matching: {vx==vx2} , vz matching: {vz==vz2}")
     else:
-        vx, vz = zener.update_velocities(sx, ex, sz, ez, Cij.rho, \
+        vx, vz, *_ = zener.update_velocities(sx, ex, sz, ez, Cij.rho, \
                                          grid.nxtot, grid.nztot, \
                                          grid.nxabs, grid.nzabs, \
                                          grid.dl, grid.dt, \
                                          sxx, sxz, szz, vx, vz)
+        # vx2, vz2 = zener.update_velocities_old(sx, ex, sz, ez, Cij.rho, \
+        #                                  grid.nxtot, grid.nztot, \
+        #                                  grid.nxabs, grid.nzabs, \
+        #                                  grid.dl, grid.dt, \
+        #                                  sxx, sxz, szz, vx, vz)
+        # print(f"vx matching: {vx==vx2} , vz matching: {vz==vz2}")
 
     if it < grid.nwav and grid.source_type == 'f':
         vx, vz = zener.apply_body_force(it, sx, ex, sz, ez, \
